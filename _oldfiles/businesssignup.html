@@ -1,0 +1,242 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+ <title>Sign Up</title>
+
+   <meta charset="utf-8"/>
+   <meta http-equiv="content-type" content="text/html" />
+   <meta name ="viewport" content="width=device-width, initial-scale=1" />
+
+   <link rel="import" href="bower_components/paper-input/paper-input.html" />
+   <link rel="import" href="bower_components/paper-button/paper-button.html" />
+   <link rel="import" href="bower_components/paper-header-panel/paper-header-panel.html" />
+   <link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html" />
+   <link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
+   <link rel="import" href="bower_components/paper-dropdown-menu/paper-dropdown-menu.html" />
+   <link rel="import" href="bower_components/paper-menu/paper-menu.html" />
+   <link rel="import" href="bower_components/paper-item/paper-item.html" />
+   <link rel="import" href="bower_components/paper-input/paper-textarea.html" />
+   <link rel="import" href="bower_components/paper-styles/color.html" />
+   <link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout.html">
+   <link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
+   <link rel="import" href="bower_components/font-roboto/roboto.html">
+
+   <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+   <style is="custom-style">
+     body {
+       font-family: Roboto;
+     }
+     .centered {
+       margin: auto;
+       margin-left: auto;
+       margin-right: auto;
+       margin-top: 50px;
+       max-width: 420px;
+       max-height: 450px;
+     }
+     img .center{
+       max-width: 90px;
+       margin-left: auto;
+       margin-right: auto;
+     }
+     paper-button.blue {
+       background: #22A7F0;
+       color: white;
+       margin-top: 10px;
+       width: 100%;
+     }
+     paper-dialog {
+       border: 5px;
+     }
+   </style>
+</head>
+
+ <body>
+   <template is="dom-bind" id="app">
+       <div class="centered">
+        <paper-material elevation="1" style="padding: 30px; border-radius: 5px">
+        <center><a href="index.php"><img src="res/anyprintlogo.png" align="middle" alt="Anyprint's Logo" width="90px" height="72px"></img></a></center>
+        <h3 style="text-align: center; color: #22A7F0;">Expand your printing business for FREE!</h3>
+        <form id ="formSignUp" action="verify.php" method="post">
+          <h3>Your Details</h3>
+          <paper-input  id= "unamefake" label="Username" pattern="[a-zA-z0-9]*" required auto-validate error-message="Invalid Username" value="{{uname}}" ></paper-input>
+          <input type="hidden" id="uname" name="uname" />
+
+         <paper-input id="upasswordfake" label="Password (8-12 characters)" type="password" minlength="8" maxlength="12" required auto-validate error-message="Invalid password" value={{upassword}}></paper-input>
+         <input type="hidden" id="upassword"  name="upassword" />
+
+         <paper-input id="uemailfake" label="Email" type="email" required auto-validate error-message="Invalid email address" value={{uemail}}></paper-input>
+         <input type="hidden" id="uemail"  name="uemail" />
+
+         <paper-input id="uhpnumfake" label="H/P Number (0123456789)" minlength="10" maxlength="11" allowed-pattern="[0-9]" required auto-validate error-message="Invalid phone number" value={{uhpnum}}></paper-input>
+         <input type="hidden" id="uhpnum"  name="uhpnum" />
+
+         <h3>Your Shop's Details</h3>
+         <paper-input  id= "upsnamefake" label="Your shop's name (At least 8 char)" minlength="8" pattern="[a-zA-z0-9 ]*" required auto-validate error-message="Invalid shop's name" value="{{upsname}}" ></paper-input>
+         <input type="hidden" id="upsname" name="upsname" />
+
+         <paper-dropdown-menu id="upsareafake" label="Your shop's location (State)" style="width: 100%;">
+           <paper-menu class="dropdown-content" selected="2">
+             <paper-item>Kedah</paper-item>
+             <paper-item>Kelantan</paper-item>
+             <paper-item>Kuala Lumpur</paper-item>
+             <paper-item>Melaka</paper-item>
+             <paper-item>Negeri Sembilan</paper-item>
+             <paper-item>Pahang</paper-item>
+             <paper-item>Perak</paper-item>
+             <paper-item>Perlis</paper-item>
+             <paper-item>Penang</paper-item>
+             <paper-item>Sabah</paper-item>
+             <paper-item>Sarawak</paper-item>
+             <paper-item>Selangor</paper-item>
+             <paper-item>Terengganu</paper-item>
+           </paper-menu>
+         </paper-dropdown-menu>
+         <input type="hidden" id="upsarea" name="upsarea" />
+
+         <paper-input id="upsaddressfake" label="Your shop's address" required auto-validate error-message="Address is required" value={{upsaddress}}></paper-input>
+         <input type="hidden" id="upsaddress"  name="upsaddress" />
+
+         <paper-dropdown-menu id="upsohfake" label="Opening Hour (From)" style="width: 100%">
+           <paper-menu class="dropdown-content" selected="9">
+             <paper-item>12 AM</paper-item>
+             <paper-item>1 AM</paper-item>
+             <paper-item>2 AM</paper-item>
+             <paper-item>3 AM</paper-item>
+             <paper-item>4 AM</paper-item>
+             <paper-item>5 AM</paper-item>
+             <paper-item>6 AM</paper-item>
+             <paper-item>7 AM</paper-item>
+             <paper-item>8 AM</paper-item>
+             <paper-item>9 AM</paper-item>
+             <paper-item>10 AM</paper-item>
+             <paper-item>11 AM</paper-item>
+             <paper-item>12 PM</paper-item>
+             <paper-item>1 PM</paper-item>
+             <paper-item>2 PM</paper-item>
+             <paper-item>3 PM</paper-item>
+             <paper-item>4 PM</paper-item>
+             <paper-item>5 PM</paper-item>
+             <paper-item>6 PM</paper-item>
+             <paper-item>7 PM</paper-item>
+             <paper-item>8 PM</paper-item>
+             <paper-item>9 PM</paper-item>
+             <paper-item>10 PM</paper-item>
+             <paper-item>11 PM</paper-item>
+           </paper-menu>
+         </paper-dropdown-menu>
+         <input type="hidden" id="upsoh"  name="upsoh" />
+
+         <paper-dropdown-menu id="upschfake" label="Closing Hour (Until)" style="width: 100%">
+           <paper-menu class="dropdown-content" selected="17">
+             <paper-item>12 AM</paper-item>
+             <paper-item>1 AM</paper-item>
+             <paper-item>2 AM</paper-item>
+             <paper-item>3 AM</paper-item>
+             <paper-item>4 AM</paper-item>
+             <paper-item>5 AM</paper-item>
+             <paper-item>6 AM</paper-item>
+             <paper-item>7 AM</paper-item>
+             <paper-item>8 AM</paper-item>
+             <paper-item>9 AM</paper-item>
+             <paper-item>10 AM</paper-item>
+             <paper-item>11 AM</paper-item>
+             <paper-item>12 PM</paper-item>
+             <paper-item>1 PM</paper-item>
+             <paper-item>2 PM</paper-item>
+             <paper-item>3 PM</paper-item>
+             <paper-item>4 PM</paper-item>
+             <paper-item>5 PM</paper-item>
+             <paper-item>6 PM</paper-item>
+             <paper-item>7 PM</paper-item>
+             <paper-item>8 PM</paper-item>
+             <paper-item>9 PM</paper-item>
+             <paper-item>10 PM</paper-item>
+             <paper-item>11 PM</paper-item>
+           </paper-menu>
+         </paper-dropdown-menu>
+         <input type="hidden" id="upsch"  name="upsch" />
+
+         <paper-button name="btnsignup" class="blue" raised onclick="submitHandler()" value="signup">CREATE AN ACCOUNT</paper-button>
+         <input type="hidden" name="signupbusiness" value="signupbusiness"/>
+       </form>
+     </paper-material elevation="1">
+    </div>
+    <paper-dialog id="verification" with-backdrop modal>
+        <h1>One more step...</h1>
+        <div>
+          <p>A 4-digit verification code will be send to your registered address in 2-3 days to verify your identity. Please key in the code once you got the code during your next login. Please confirm the key in address is correct: <p>
+          <center><h3 style="color: red"><b>{{upsaddress}}</b></h3></center>
+          <p><b>NOTE: Your printing shop will not show up in customer's page unless you key in the correct code</b></p>
+        </div>
+        <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button autofocus onclick="continueReg()">Continue...</paper-button>
+    </paper-dialog>
+  </template>
+
+ <script>
+  var app = document.querySelector('#app');
+  var oh;
+  var ch;
+  var realOh = -1;
+  var realCh = -1;
+  var submitHandler = function(){
+    console.log(app.$.upsohfake.value);
+    if(!app.$.unamefake.validate()){
+      return;
+    }
+    if(!app.$.upasswordfake.validate()){
+      return;
+    }
+    if(!app.$.uemailfake.validate()){
+      return;
+    }
+    if(!app.$.uhpnumfake.validate()){
+      return;
+    }
+    if(!app.$.upsnamefake.validate()){
+      return;
+    }
+    if(!app.$.upsaddressfake.validate()){
+      return;
+    }
+    if(app.$.upsohfake.value == app.$.upschfake.value){
+      alert("Invalid Time!");
+      return;
+    }
+    oh = app.$.upsohfake.value.split(" ");
+    ch = app.$.upschfake.value.split(" ");
+    realOh = parseInt(oh[0]);
+    realCh = parseInt(ch[0]);
+    if(oh[1] == "PM"){
+      realOh = realOh + 12;
+      if(realOh == 24){
+        realOh = 0;
+      }
+    }
+    if(ch[1] == "PM"){
+      realCh = realCh + 12;
+      if(realCh == 24){
+        realCh = 0;
+      }
+    }
+    var dialog = document.querySelector("#verification");
+    dialog.open();
+  }
+
+  var continueReg = function(){
+      app.$.uname.value = app.uname;
+      app.$.upassword.value = app.upassword;
+      app.$.uemail.value = app.uemail;
+      app.$.uhpnum.value = app.uhpnum;
+      app.$.upsname.value = app.upsname;
+      app.$.upsarea.value = app.$.upsareafake.value;
+      app.$.upsaddress.value = app.upsaddress;
+      app.$.upsoh.value = realOh;
+      app.$.upsch.value = realCh;
+      app.$.formSignUp.submit();
+  }
+    </script>
+ </body>
+ </html>

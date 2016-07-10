@@ -1,0 +1,66 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/firebase-element/firebase-auth.html">
+<link rel="import" href="../bower_components/firebase-element/firebase.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-swipeable-container/iron-swipeable-container.html">
+
+<body>
+  <template is="dom-bind" id="app">
+    <firebase-auth
+      auto-login
+      redirect
+      location="[[firebaseURL]]"
+      provider="[[firebaseProvider]]"
+      on-error="onFirebaseError"
+      on-login="onFirebaseLogin"></firebase-auth>
+    <paper-toast id="errorToast"></paper-toast>
+    <div><paper-button id="sendNotificationBtn" on-click="sendNotificaiton">Send Notification</paper-button></div>
+    <template is="dom-repeat" items="{{items}}">
+      <p>[[item.content]]</p> <paper-button id="deleteNotification" on-click="deleteNotification">Delete Notification</paper-button>
+    </template>
+  </template>
+</body>
+
+  <script>
+    var app = document.querySelector("#app");
+    app.firebaseURL= 'https://anyprint.firebaseio.com';
+    app.firebaseProvider = 'anonymous';
+    app.ready = function() {
+        this.items = [];
+        this.firebaseURL = 'https://anyprint.firebaseio.com';
+        this.firebaseProvider = 'anonymous';
+      };
+    app.updateItems = function(snapshot) {
+        this.items = [];
+        snapshot.forEach(function(childSnapshot) {
+          var item = childSnapshot.val();
+          item.uid = childSnapshot.key();
+          this.push('items', item);
+        }.bind(this));
+      };
+      app.deleteNotification = function(event) {
+        this.ref.child(event.model.item.uid).remove();
+      };
+    app.onFirebaseError = function(event) {
+        this.$.errorToast.text = event.detail.message;
+        this.$.errorToast.show();
+      };
+    app.onFirebaseLogin = function(event) {
+        console.log(this.userID);
+        console.log(this.firebaseURL + '/100001');
+        this.ref = new Firebase(this.firebaseURL + '/100001');
+        console.log("Logged in");
+           this.ref.on('value', function(snapshot) {
+             app.updateItems(snapshot);
+           });
+      };
+    app.sendNotificaiton = function(event){
+        this.ref.push({
+          content: "Test Notification"
+        });
+      };
+  </script>
+</dom-module>

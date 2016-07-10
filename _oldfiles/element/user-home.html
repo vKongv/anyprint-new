@@ -1,0 +1,170 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="user-home">
+  <template>
+    <iron-ajax
+      auto
+      id="getPSList"
+      url="../retrieveps.php"
+      params='{"q":"All"}'
+      handle-as="json"
+      last-response="{{printingshops}}"
+      on-response="checkPSNum"></iron-ajax>
+
+      <center>
+      <paper-dropdown-menu id="location" label="Change Location" style="margin:10px 10px 0px 20px;" value={{currentLocation}}>
+        <paper-menu class="dropdown-content" selected="{{location}}">
+          <paper-item>All</paper-item>
+          <paper-item>Kedah</paper-item>
+          <paper-item>Kelantan</paper-item>
+          <paper-item>Kuala Lumpur</paper-item>
+          <paper-item>Melaka</paper-item>
+          <paper-item>Negeri Sembilan</paper-item>
+          <paper-item>Pahang</paper-item>
+          <paper-item>Perak</paper-item>
+          <paper-item>Perlis</paper-item>
+          <paper-item>Penang</paper-item>
+          <paper-item>Sabah</paper-item>
+          <paper-item>Sarawak</paper-item>
+          <paper-item>Selangor</paper-item>
+          <paper-item>Terengganu</paper-item>
+        </paper-menu>
+      </paper-dropdown-menu>
+    </center>
+
+      <div class="container">
+        <template is="dom-if" if="{{noPrinter}}">
+          <center><h2 style="color: grey;">There is currently no printing shop opening...</h2></center>
+        </template>
+        <template is="dom-repeat" items="{{printingshops}}" as="item">
+          <paper-card class="printingshop open" heading="[[item.name]]" id="card[[item.id]]">
+            <div class="card-content">
+              [[item.address]]
+            </div>
+            <div class="card-actions">
+              <paper-button class$="[[_checkClose(item.status)]]" raised onclick="popup(event)" id="[[item.id]]">S E L E C T</paper-button>
+            <div>
+          </paper-card>
+        </template>
+      </div>
+  </template>
+  <style is="custom-style">
+    paper-card{
+      color: #ffffff;
+    }
+    .open {
+      --paper-card: {
+        background-color: #22A7F0;
+      }
+      --paper-card-header-color: #ffffff;
+    }
+    .close {
+      --paper-card: {
+        background-color: #999999;
+      }
+      --paper-card-header-color: #ffffff;
+    }
+    .container{
+      @apply(--layout-horizontal);
+      width: 90%;
+      margin: auto;
+      margin-top: 36px;
+      margin-bottom: 36px;
+      display:flex;
+      flex-flow: row
+      wrap
+    }
+    .printingshop {
+      min-width: 300px;
+      max-width: 300px;
+      margin: 10px;
+      @apply(--layout-flex);
+      --paper-card-header-text: {
+        font-weight: bold;
+      }
+    }
+    .card-button-close{
+      background: grey;
+    }
+    .card-button-open{
+      background: #65C6BB;
+    }
+    .text-center {
+      text-align: center;
+    }
+    .card-content {
+      margin-bottom: auto;
+      flex:1;
+    }
+    .card-actions {
+      margin-top: auto;
+      padding: 10px;
+    }
+    a{
+      text-decoration: none;
+      color: white;
+    }
+    #change{
+      color: white;
+      background-color: blue;
+    }
+  </style>
+  <script>
+    Polymer({
+      is: 'user-home',
+      properties: {
+        noPrinter : {
+          type: Boolean
+        },
+        currentLocation: {
+          type: String,
+          notify: true,
+          observer: 'changeLoc'
+        }
+      },
+      changeLoc: function(event){
+        if(this.currentLocation != ""){
+          console.log("1");
+          var param = {q : this.currentLocation};
+          this.$.getPSList.params = param;
+        }
+      },
+      ready :function(){
+        this.location = 0;
+      },
+      submitHandler: function(event){
+        Polymer.dom(event).localTarget.parentElement.submit();
+      },
+      _checkClose: function(status){
+        var classes = "card-button";
+        if(status == "disabled"){
+          classes += '-close';
+        }else{
+          classes += '-open';
+        }
+        return classes;
+      },
+      checkPSNum: function(){
+        if(this.printingshops.length > 0){
+          this.noPrinter = false;
+        }else{
+          this.noPrinter = true;
+        }
+      }
+    });
+    var popup = function(event){
+      var id = event.srcElement.id;
+      var url = "uploadfile.php?id=" + id;
+      window.open(url,'1453911649684','width=500,height=600,toolbar=0,menubar=0,location=0,status=1,scrollbars=1,resizable=0,left=0,top=0');
+    }
+
+  </script>
+</dom-module>

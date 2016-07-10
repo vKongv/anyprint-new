@@ -1,0 +1,146 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/firebase-element/firebase-auth.html">
+<link rel="import" href="../bower_components/firebase-element/firebase.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<dom-module id="business-pending-print">
+  <template>
+    <firebase-auth
+      auto-login
+      redirect
+      location="[[firebaseURL]]"
+      provider="[[firebaseProvider]]"
+      on-error="onFirebaseError"
+      on-login="onFirebaseLogin"></firebase-auth>
+    <iron-ajax
+      id="retrievepr"
+      url="../printrequest.php"
+      params='{"business":"1"}'
+      handle-as="json"
+      last-response="{{printrequests}}"
+      on-response="checkPRnum"></iron-ajax>
+      <template is="dom-if" if={{!status}}>
+        <center><h2 style="color: grey;">You do not have any pending print request</h2></center>
+      </template>
+    <template is="dom-repeat" items=[[printrequests]]>
+      <div class="pr-container">
+        <div class="item">
+          <div class="details">
+            <div class="primary">
+              <b>Print Reqeust # [[item.id]]</b>
+            </div>
+            <div class="secondary">
+              From: <a id="[[item.name]]"href="#" on-click="viewUserDetails">[[item.name]] ([[item.status]])</a>
+              <span style="margin-left:5px;">Amount: RM [[item.price]]</span>
+            </div>
+          </div>
+          <div>
+            <button id="[[item.id]]-[[item.name]]-[[item.status]]-[[item.code]]-[[item.prstatus]]" type="button" on-click="viewDetails">View Details</button>
+          </div>
+    </template>
+  </template>
+  <style>
+  a:visited{
+    color: blue;
+  }
+  :host {
+    display: block;
+  }
+  .item{
+    @apply(--layout-horizontal);
+    padding: 16px 22px;
+  }
+  .details {
+    @apply(--layout-flex);
+    @apply(--layout-vertical);
+  }
+  .primary {
+    font-size: 24px;
+  }
+  .space-left{
+    margin-left: 30px;
+  }
+  .pr-container{
+    width: 80%;
+    color: white;
+    background-color: #22A7F0;
+    padding: 10px;
+    margin: 30px;
+    border-radius: 5px;
+  }
+    .highlight{
+      text-decoration: underline;
+      color: blue;
+      font-size: 12px;
+    }
+  </style>
+  <script>
+    Polymer({
+      is: 'business-pending-print',
+      properties: {
+        status :{
+          type: Boolean
+        },
+        userID :{
+          type: String
+        }
+      },
+      ready : function() {
+        this.printrequests = [];
+        this.items = [];
+        this.firebaseURL = 'https://anyprint.firebaseio.com';
+        this.firebaseProvider = 'anonymous';
+        },
+      updateItems: function(snapshot) {
+        this.items = [];
+        snapshot.forEach(function(childSnapshot) {
+          var item = childSnapshot.val();
+          item.uid = childSnapshot.key();
+          this.push('items', item);
+        }.bind(this));
+      },
+      checkPRnum: function(){
+        if(this.printrequests.length <= 0 ){
+          this.status = false;
+        }else{
+          this.status = true;
+          var message = "You have " +  this.printrequests.length + " Print Request(s) pending to be updated.";
+          var canAdd = true;
+          for(i = 0; i< this.items.length; i++){
+            if(message == this.items[i].content){
+              canAdd = false
+              break;
+            }
+          }
+          if(canAdd){
+            this.ref.push({
+              content: message,
+              type: 2
+            });
+          }
+        }
+      },
+      viewDetails: function(event){
+        console.log(event);
+        var all = event.srcElement.id.split("-");
+        var url = "busviewjobdetails.php?id=" + all[0] + "&name=" + all[1] + "&status=" + all[2] + "&code=" + all[3] + "&prstatus=" + all[4];
+        window.open(url,'1453911649684','width=500,height=600,toolbar=0,menubar=0,location=0,status=1,scrollbars=1,resizable=0,left=0,top=0');
+      },
+      onFirebaseLogin :function(event) {
+          console.log(this.firebaseURL + '/' + this.userID);
+          this.ref = new Firebase(this.firebaseURL + '/' + this.userID);
+          var app = document.querySelector('business-pending-print');
+             this.ref.on('value', function(snapshot) {
+               app.updateItems(snapshot);
+             });
+            this.$.retrievepr.generateRequest();
+        },
+      viewUserDetails : function(event){
+        var id = event.srcElement.id;
+        var url = "viewuserdetails.php?name=" + id;
+        window.open(url,'1453911649684','width=500,height=200,toolbar=0,menubar=0,location=0,status=1,scrollbars=1,resizable=0,left=0,top=0');
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,53 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/firebase-element/firebase-auth.html">
+<link rel="import" href="../bower_components/firebase-element/firebase.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<dom-module id="user-print-history">
+  <template>
+    <iron-ajax
+      auto
+      url="../printrequest.php"
+      handle-as="json"
+      last-response="{{printrequests}}"></iron-ajax>
+    <template is="dom-repeat" items=[[printrequests]]>
+      <div class="pr-container">
+        <h2>Print Reqeust # [[item.id]] : [[item.name]]</h2>
+        <p><span>Printing Shop: <a id = "[[item.id]]" href="#" on-click="viewPSDetails">[[item.shop]]</a></span> <span class="space-left">Amount: [[item.price]]</span><p>
+        <button id="[[item.jobid]]" type="button" on-click="viewDetails">View Details</button>
+      </div>
+    </template>
+  </template>
+  <style>
+    a:visited{
+      color: blue;
+    }
+    .space-left{
+      margin-left: 20px;
+    }
+    .pr-container{
+      width: 80%;
+      color: white;
+      background-color: #22A7F0;
+      padding: 10px;
+      margin: 30px;
+      border-radius: 5px;
+    }
+  </style>
+  <script>
+    Polymer({
+      is: 'user-print-history',
+      viewDetails: function(event){
+        var id = event.srcElement.id;
+        var url = "viewjobdetails.php?id=" + id;
+        window.open(url,'1453911649684','width=500,height=600,toolbar=0,menubar=0,location=0,status=1,scrollbars=1,resizable=0,left=0,top=0');
+      },
+      viewPSDetails : function (event){
+        var id = event.srcElement.id;
+        var url = "viewpsdetails.php?id=" + id;
+        window.open(url,'1453911649684','width=500,height=600,toolbar=0,menubar=0,location=0,status=1,scrollbars=1,resizable=0,left=0,top=0');
+      }
+    });
+  </script>
+</dom-module>

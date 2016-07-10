@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+ <title>Sign Up</title>
+
+   <meta charset="utf-8"/>
+   <meta http-equiv="content-type" content="text/html" />
+   <meta name ="viewport" content="width=device-width, initial-scale=1" />
+
+   <link rel="import" href="bower_components/paper-input/paper-input.html" />
+   <link rel="import" href="bower_components/paper-button/paper-button.html" />
+   <link rel="import" href="bower_components/paper-header-panel/paper-header-panel.html" />
+   <link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html" />
+   <link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
+   <link rel="import" href="bower_components/paper-styles/color.html" />
+   <link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout.html">
+   <link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
+   <link rel="import" href="bower_components/font-roboto/roboto.html">
+
+   <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+   <style is="custom-style">
+     body {
+       font-family: Roboto;
+     }
+     .centered {
+       margin: auto;
+       margin-left: auto;
+       margin-right: auto;
+       margin-top: 50px;
+       max-width: 420px;
+       max-height: 450px;
+     }
+     img .center{
+       max-width: 90px;
+       margin-left: auto;
+       margin-right: auto;
+     }
+     paper-button.blue {
+       background: #22A7F0;
+       color: white;
+       margin-top: 10px;
+       width: 100%;
+     }
+     paper-dialog {
+       border: 5px;
+     }
+   </style>
+</head>
+
+ <body>
+   <p>Minor changes</p>
+   <template is="dom-bind" id="app">
+     <iron-ajax
+       id="sendcode"
+       url="sendverificationcode.php"
+       handle-as="text"
+       last-response="{{code}}"></iron-ajax>
+       <div class="centered">
+        <paper-material elevation="1" style="padding: 30px; border-radius: 5px">
+        <center><a href="index.php"><img src="res/anyprintlogo.png" align="middle" alt="Anyprint's Logo" width="90px" height="72px"></img></a></center>
+        <h3 style="text-align: center; color: #22A7F0;">Create an account for FREE!</h3>
+        <form id ="formSignUp" action="verify.php" method="post">
+          <paper-input  id= "unamefake" label="Username" pattern="[a-zA-z0-9]*" required auto-validate error-message="Invalid Username" value="{{uname}}" ></paper-input>
+          <input type="hidden" id="uname" name="uname" />
+
+         <paper-input id="upasswordfake" label="Please type your password (8-12 characters)" type="password" minlength="8" maxlength="12" required auto-validate error-message="Invalid password" value={{upassword}}></paper-input>
+         <input type="hidden" id="upassword"  name="upassword" />
+
+         <paper-input id="uemailfake" label="Email" type="email" required auto-validate error-message="Invalid email address" value={{uemail}}></paper-input>
+         <input type="hidden" id="uemail"  name="uemail" />
+
+         <paper-input id="uhpnumfake" label="H/P Number (0123456789)" minlength="10" maxlength="11" allowed-pattern="[0-9]" required auto-validate error-message="Invalid phone number" value={{uhpnum}}></paper-input>
+         <input type="hidden" id="uhpnum"  name="uhpnum" />
+
+         <paper-button name="btnsignup" class="blue" raised onclick="submitHandler()" value="signup">CREATE AN ACCOUNT</paper-button>
+         <input type="hidden" name="signup" value="signup"/>
+       </form>
+     </paper-material elevation="1">
+     <p>Looking to register your printing shop? Click <a href="businesssignup.html">here</a></p>
+    </div>
+    <paper-dialog id="verification" with-backdrop modal>
+        <h1>Verification Code</h1>
+        <div>
+          <p>A 4-digit verification code has been send to <b>{{uhpnum}}</b> to verify your identity. Please key in the code here.</p>
+          <p><b>NOTE: Your Registration will NOT success unless you key in the correct code</b></p>
+          <paper-input label="Enter verification code" id="inputCode" value={{inputCode}} maxlength="4"></paper-input>
+        </div>
+        <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button autofocus onclick="continueReg()">Continue...</paper-button>
+    </paper-dialog>
+  </template>
+
+ <script>
+  var app = document.querySelector('#app');
+  var canSubmit = true;
+  var realCode = " ";
+  var attempt = 5;
+
+  var submitHandler = function(){
+    if(!app.$.unamefake.validate()){
+      return;
+    }
+    if(!app.$.upasswordfake.validate()){
+      return;
+    }
+    if(!app.$.uemailfake.validate()){
+      return;
+    }
+    if(!app.$.uhpnumfake.validate()){
+      return;
+    }
+    var params = {hpnum: app.uhpnum};
+    app.$.sendcode.params = params;
+    app.$.sendcode.generateRequest();
+    var dialog = document.querySelector("#verification");
+    dialog.open();
+  }
+  var continueReg = function(){
+    if(attempt > 0){
+      realCode = realCode + app.inputCode
+      if(app.code == realCode){
+        //If ok submit the form
+        app.$.uname.value = app.uname;
+        app.$.upassword.value = app.upassword;
+        app.$.uemail.value = app.uemail;
+        app.$.uhpnum.value = app.uhpnum;
+        app.$.formSignUp.submit();
+      }else{
+        attempt--;
+        alert("Invalid Code! Left " + attempt + " attempt(s)");
+      }
+    }else{
+      alert("Registration failed! Too many attempts on entering verification code!");
+      window.location = "signup.html";
+    }
+  }
+    </script>
+ </body>
+ </html>
