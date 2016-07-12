@@ -1,0 +1,95 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/firebase-element/firebase-auth.html">
+<link rel="import" href="../bower_components/firebase-element/firebase.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-swipeable-container/iron-swipeable-container.html">
+<dom-module id="business-home">
+  <template>
+    <style>
+    /*Not yet done*/
+      .dismiss {
+        --paper-card-header-color: pink;
+      }
+    </style>
+    <firebase-auth
+      auto-login
+      redirect
+      location="[[firebaseURL]]"
+      provider="[[firebaseProvider]]"
+      on-error="onFirebaseError"
+      on-login="onFirebaseLogin"></firebase-auth>
+    <paper-toast id="errorToast"></paper-toast>
+    <div style="max-width: 600px; margin-top: 20px; margin-left: auto; margin-right: auto; @apply(--layout-vertical); @apply(--center-justified);">
+      <template is="dom-repeat" items="{{items}}">
+        <iron-swipeable-container>
+        <paper-card heading="Notification" style="width: 100%; margin-bottom: 16px;">
+          <div class="card-content">{{item.content}}</div>
+          <div class="card-actions">
+            <paper-icon-button on-click="openNotification" icon="open-in-browser" title="Open"></paper-icon-button>
+            <paper-icon-button id="dismissAction" on-click="dismissNotification" icon="clear" title="Dismiss"></paper-icon-button>
+          </div>
+        </paper-card>
+        </iron-swipeable-container>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'business-home',
+      properties: {
+        items: {
+          type : Array,
+        },
+        isNotification: {
+          type: Boolean
+        },
+        userID: {
+          type: String,
+        }
+      },
+      listeners: {
+        'iron-swipe': 'swipeToDismiss'
+      },
+      ready: function() {
+        this.items = [];
+        this.firebaseURL = 'https://anyprint.firebaseio.com';
+        this.firebaseProvider = 'anonymous';
+      },
+      updateItems: function(snapshot) {
+        this.items = [];
+        snapshot.forEach(function(childSnapshot) {
+          var item = childSnapshot.val();
+          item.uid = childSnapshot.key();
+          this.push('items', item);
+        }.bind(this));
+      },
+      onFirebaseError: function(event) {
+        this.$.errorToast.text = "Error: Cannot retrieve notification";
+        this.$.errorToast.show();
+      },
+      onFirebaseLogin: function(event) {
+        this.ref = new Firebase(this.firebaseURL );
+        this.ref.child(this.userID).remove();
+        this.ref = new Firebase(this.firebaseURL + "/" + this.userID);
+        var app = document.querySelector('business-home');
+           this.ref.on('value', function(snapshot) {
+             app.updateItems(snapshot);
+           });
+      },
+      openNotification: function(event) {
+        var app = document.querySelector('#app'); //To get the template section of businessprofile.php
+        app.select = event.model.item.type; //Set the page
+        this.ref.child(event.model.item.uid).remove();
+      },
+      swipeToDismiss: function(event){
+        this.ref.child(event.model.item.uid).remove();
+      },
+      dismissNotification: function(event){
+        this.ref.child(event.model.item.uid).remove();
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,155 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../bower_components/firebase-element/firebase.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<dom-module id="business-manage-printer">
+  <template>
+    <firebase-auth
+      auto-login
+      redirect
+      location="[[firebaseURL]]"
+      provider="[[firebaseProvider]]"
+      on-error="onFirebaseError"
+      on-login="onFirebaseLogin"></firebase-auth>
+    <iron-ajax
+      id="getlocalprinter"
+      url="../getprinter.php"
+      params='{"q":"local"}'
+      handle-as="json"
+      last-response="{{printers}}"
+      on-response="checkPNum"></iron-ajax>
+      <template is="dom-if" if={{!status}}>
+        <center><h2 style="color: grey;">You haven't add any printer</h2></center>
+      </template>
+      <template is="dom-repeat" items=[[printers]]>
+        <div class="pr-container">
+          <div class="item">
+            <div class="details">
+              <div class="primary">
+                <b><span>[[item.name]]</span></b>
+              </div>
+              <div class="secondary">
+                ID: <span>[[item.id]]</span>
+                <span class="space-left">Status: <span>[[item.status]]</span></span>
+              </div>
+            </div>
+            <div>
+              <button id="deleteBtn" type="button" on-click="goto">Remove from system</button>
+          </div>
+      </template>
+  </template>
+  <style>
+    :host {
+      display: block;
+    }
+    .item{
+      @apply(--layout-horizontal);
+      padding: 16px 22px;
+    }
+    .details {
+      @apply(--layout-flex);
+      @apply(--layout-vertical);
+    }
+    .primary {
+      font-size: 24px;
+    }
+    .space-left{
+      margin-left: 30px;
+    }
+    .pr-container{
+      width: 80%;
+      color: white;
+      background-color: #22A7F0;
+      padding: 10px;
+      margin: 30px;
+      border-radius: 5px;
+    }
+  </style>
+  <script>
+    Polymer({
+      is: 'business-manage-printer',
+      properties: {
+        status :{
+          type: Boolean,
+        },
+        userID :{
+          type :String,
+        }
+      },
+      ready : function() {
+        this.printers = [];
+        this.items = [];
+        this.firebaseURL = 'https://anyprint.firebaseio.com';
+        this.firebaseProvider = 'anonymous';
+        },
+        updateItems: function(snapshot) {
+          this.items = [];
+          snapshot.forEach(function(childSnapshot) {
+            var item = childSnapshot.val();
+            item.uid = childSnapshot.key();
+            this.push('items', item);
+          }.bind(this));
+        },
+      checkPNum: function(){
+        if(this.printers.length <= 0){
+          this.status = false;
+          var message = "No printer added. Please go to 'Add Printer' Page to add your printer.";
+          var canAdd = true;
+          for(i = 0; i< this.items.length; i++){
+            if(message == this.items[i].content){
+              canAdd = false
+              break;
+            }
+          }
+          if(canAdd){
+            this.ref.push({
+              content: message,
+              type: 1
+            });
+          }
+        }else{
+          this.status = true;
+        }
+        //Check printer's online status
+        for(j = 0; j< this.printers.length; j++){
+          if(this.printers[j].status != "ONLINE"){
+            var message = "Printer " + this.printers[j].name + " is offline. Please check the connection.";
+            var canAdd = true;
+            for(k = 0; k< this.items.length; k++){
+              if(message == this.items[k].content){
+                canAdd = false
+                break;
+              }
+            }
+            if(canAdd){
+              this.ref.push({
+                content: message,
+                type : 3
+              });
+            }
+          }
+        }
+      },
+      attached: function() {
+        this.fire('finished_attached_manage',{done: 'true'});
+        console.log("Attached!");
+      },
+      goto: function(event){
+         var url = 'deleteprinter.php?pid=' + event.model.item.id;
+         window.location = url;
+      },
+      onFirebaseLogin :function(event) {
+          console.log(this.firebaseURL + '/' + this.userID);
+          this.ref = new Firebase(this.firebaseURL + '/' + this.userID);
+          console.log("Logged in");
+          var app = document.querySelector('business-manage-printer');
+             this.ref.on('value', function(snapshot) {
+               app.updateItems(snapshot);
+             });
+             this.$.getlocalprinter.generateRequest();
+        },
+    });
+  </script>
+</dom-module>

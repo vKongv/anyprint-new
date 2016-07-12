@@ -39,12 +39,12 @@
    <meta http-equiv="content-type" content="text/html" />
    <meta name ="viewport" content="width=device-width, initial-scale=1" />
 
-   <link rel="import" href="bower_components/paper-input/paper-input.html" />
-   <link rel="import" href="bower_components/paper-button/paper-button.html" />
-   <link rel="import" href="bower_components/paper-header-panel/paper-header-panel.html" />
-   <link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html" />
-   <link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout.html">
-   <link rel="import" href="bower_components/font-roboto/roboto.html">
+   <link rel="import" href="../bower_components/paper-input/paper-input.html" />
+   <link rel="import" href="../bower_components/paper-button/paper-button.html" />
+   <link rel="import" href="../bower_components/paper-header-panel/paper-header-panel.html" />
+   <link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html" />
+   <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+   <link rel="import" href="../bower_components/font-roboto/roboto.html">
 
    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
    <style is="custom-style">
