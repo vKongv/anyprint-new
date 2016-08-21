@@ -85,24 +85,25 @@ $polymerAsset = \frontend\assets\PolymerAsset::register($this);
  <body>
    <!-- Login form -->
    <template is="dom-bind" id="app">
+    <!-- Active Form for Yii model -->
+     <?php $form = ActiveForm::begin(['id' => 'formlogin']); ?>
+     <?= $form->field($model, 'username')->hiddenInput(['value' => '{{uname}}', 'id' => 'uname'])->label(false) ?>
+     <?= $form->field($model, 'password')->hiddenInput(['value' => '{{upassword}}', 'id' => 'uname'])->label(false) ?>
+     <?php ActiveForm::end(); ?>
+
+    <!-- Polymer interface for form-->
      <center><a href="index.php"><img src="res/anyprintlogo.png" align="middle" alt="Anyprint's Logo" width="90px" height="72px"></img></a></center>
        <div class="centered">
          <paper-toolbar><h2>Login to your account</h2></paper-toolbar>
          <paper-material elevation="1" style="padding: 30px; border-radius: 5px">
-         <form id ="formlogin" action="verify.php" method="post">
            <paper-input  id= "unamefake" label="Username" required auto-validate error-message="Please type your username" value="{{uname}}" ></paper-input>
-           <input type="hidden" id="uname" name="uname" value="{{formUName}}"/>
-
            <paper-input id="upasswordfake" label="Password" type="password" required auto-validate error-message="Please type your password" value={{upassword}}></paper-input>
-           <input type="hidden" id="upassword"  name="upassword" value="{{formUPassword}}"/>
-
            <paper-button class="blue" name="btnlogin" raised onclick="submitHandler()" value="login">Log in</paper-button>
-           <input type="hidden" name="login" value="login"/>
-         </form>
        </paper-material elevation="1">
        <p>Don't have an account? Register <a href="signup.html">now</a></p>
         </div>
     </template>
+
 
  <script>
   var app = document.querySelector('#app');

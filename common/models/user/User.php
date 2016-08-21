@@ -29,9 +29,9 @@ class User extends ActiveRecord  implements IdentityInterface
 {
     //For @property status
     const STATUS_UNVERIFIED = -1; //Not verified user
-    const STATUS_HP_VERIFIED = 0 //Partial verified user (Verified only hp)
+    const STATUS_HP_VERIFIED = 0; //Partial verified user (Verified only hp)
     const STATUS_EMAIL_VERIFIED = 1; //Partial verified user (Verified only email)
-    const STATUS_VERIFIED = 2 //Verified user (Verfied both email and hp)
+    const STATUS_VERIFIED = 2; //Verified user (Verfied both email and hp)
 
     //For @property type
     const TYPE_NORMAL = 0; //Normal user (Printing user)
