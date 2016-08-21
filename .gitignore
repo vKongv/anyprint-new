@@ -7,4 +7,6 @@ backend/config/main-local.php
 backend/config/params-local.php
 frontend/config/main-local.php
 frontend/config/params-local.php
-composer.lock
+composer.phar
+desktop.ini
+.idea/
