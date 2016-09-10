@@ -61,10 +61,10 @@ class User extends ActiveRecord  implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'auth_key', 'password_hash', 'password', 'hp', 'email', 'created_at', 'updated_at', 'google_refresh_token'], 'required'],
+            [['username', 'auth_key', 'password_hash', 'hp', 'email'], 'required'],
             [['status', 'type', 'created_at', 'updated_at'], 'integer'],
             [['username', 'password_hash', 'password_reset_token', 'email'], 'string', 'max' => 255],
-            [['auth_key', 'password'], 'string', 'max' => 32],
+            [['auth_key'], 'string', 'max' => 32],
             [['hp', 'google_refresh_token'], 'string', 'max' => 64],
             [['username', 'email', 'hp'], 'unique', 'targetAttribute' => ['username', 'email', 'hp'], 'message' => 'The combination of User Name, User Handphone and User Email has already been taken.'],
             ['status', 'default', 'value' => self::STATUS_UNVERIFIED],

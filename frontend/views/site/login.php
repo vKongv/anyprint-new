@@ -47,8 +47,6 @@ $polymerAsset = \frontend\assets\PolymerAsset::register($this);
 ?>
 <html>
 <head>
- <title>Login</title>
-
    <meta charset="utf-8"/>
    <meta http-equiv="content-type" content="text/html" />
    <meta name ="viewport" content="width=device-width, initial-scale=1" />

@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use frontend\models\BusinessSignUpForm;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
@@ -142,22 +143,47 @@ class SiteController extends Controller
     }
 
     /**
-     * Signs user up.
-     *
-     * @return mixed
-     */
+ * Signs user up.
+ *
+ * @return mixed
+ */
     public function actionSignup()
     {
         $model = new SignupForm();
         if ($model->load(Yii::$app->request->post())) {
             if ($user = $model->signup()) {
                 if (Yii::$app->getUser()->login($user)) {
+                    //TODO: Redirect user to user home page
                     return $this->goHome();
                 }
             }
         }
 
         return $this->render('signup', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Printing shop owner sign up.
+     *
+     * @return mixed
+     */
+    public function actionBusinessSignUp()
+    {
+        $model = new BusinessSignUpForm();
+        if ($model->load(Yii::$app->request->post())) {
+//            var_dump($model);
+//            die();
+            if ($user = $model->signup()) {
+                if (Yii::$app->getUser()->login($user)) {
+                    //TODO: Redirect user to user home page
+                    return $this->goHome();
+                }
+            }
+        }
+
+        return $this->render('businessSignup', [
             'model' => $model,
         ]);
     }

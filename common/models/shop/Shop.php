@@ -3,6 +3,7 @@
 namespace common\models\shop;
 
 use Yii;
+use common\models\User\user;
 
 /**
  * This is the model class for table "printing_shop".
@@ -35,12 +36,12 @@ class Shop extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'address', 'area', 'operating_hour', 'closing_hour', 'verification_code', 'user_id'], 'required'],
+            [['name', 'address', 'area', 'verification_code', 'user_id'], 'required'],
             [['operating_hour', 'closing_hour'], 'safe'],
             [['user_id'], 'integer'],
             [['name', 'address'], 'string', 'max' => 255],
             [['area'], 'string', 'max' => 64],
-            [['verification_code'], 'string', 'max' => 4],
+            [['verification_code'], 'string', 'max' => 8],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
@@ -85,5 +86,12 @@ class Shop extends \yii\db\ActiveRecord
     public static function find()
     {
         return new ShopQuery(get_called_class());
+    }
+
+    /**
+     * Generate verification code for this shop (To verify the address of the shop)
+     */
+    public function generateVerificationCode(){
+        $this->verification_code = Yii::$app->security->generateRandomString(8);
     }
 }
